@@ -196,46 +196,49 @@ function App() {
   const { theme, set } = useTheme()
 
   return (
-    <div className="container">
+    <>
       <nav className="navbar">
-        <span className="brand">Clash Royale — Gestão de Clã</span>
-        <select
-          className="clan-select"
-          value={clanId}
-          onChange={(e) => setClanId(e.target.value)}
-        >
-          <option value="">Selecione um clã…</option>
-          {clans.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name} (#{c.id})
-            </option>
-          ))}
-        </select>
-        <div className="tabs">
-          <button
-            className={tab === 'report' ? 'active' : ''}
-            onClick={() => setTab('report')}
+        <div className="navbar-inner">
+          <span className="brand">Clash Royale — Gestão de Clã</span>
+          <select
+            className="clan-select"
+            value={clanId}
+            onChange={(e) => setClanId(e.target.value)}
           >
-            Relatório
-          </button>
-          <button
-            className={tab === 'attacks' ? 'active' : ''}
-            onClick={() => setTab('attacks')}
+            <option value="">Selecione um clã…</option>
+            {clans.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name} (#{c.id})
+              </option>
+            ))}
+          </select>
+          <div className="tabs">
+            <button
+              className={tab === 'report' ? 'active' : ''}
+              onClick={() => setTab('report')}
+            >
+              Relatório
+            </button>
+            <button
+              className={tab === 'attacks' ? 'active' : ''}
+              onClick={() => setTab('attacks')}
+            >
+              Ataques de Guerra
+            </button>
+          </div>
+          <select
+            className="theme-select"
+            value={theme}
+            onChange={(e) => set(e.target.value)}
+            title="Tema: Auto segue o sistema"
           >
-            Ataques de Guerra
-          </button>
+            <option value="auto">Auto</option>
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+          </select>
         </div>
-        <select
-          className="theme-select"
-          value={theme}
-          onChange={(e) => set(e.target.value)}
-          title="Tema: Auto segue o sistema"
-        >
-          <option value="auto">Auto</option>
-          <option value="light">Claro</option>
-          <option value="dark">Escuro</option>
-        </select>
       </nav>
+      <div className="container">
 
       {clansError && <p className="error">{clansError}</p>}
       {!clanId && <p className="muted">Escolha um clã acima.</p>}
@@ -254,6 +257,7 @@ function App() {
         </>
       )}
     </div>
+    </>
   )
 }
 
