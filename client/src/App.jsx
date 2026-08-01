@@ -7,6 +7,42 @@ function fmt(v) {
   return v === null || v === undefined ? '-' : v
 }
 
+const THEMES = ['auto', 'light', 'dark']
+const THEME_LABEL = { auto: 'Auto', light: 'Claro', dark: 'Escuro' }
+
+function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('theme') || 'auto'
+    } catch {
+      return 'auto'
+    }
+  })
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const apply = () => {
+      const effective = theme === 'auto' ? (mq.matches ? 'dark' : 'light') : theme
+      document.documentElement.dataset.theme = effective
+    }
+    apply()
+    if (theme === 'auto') {
+      mq.addEventListener('change', apply)
+      return () => mq.removeEventListener('change', apply)
+    }
+  }, [theme])
+
+  const cycle = () => {
+    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length]
+    setTheme(next)
+    try {
+      localStorage.setItem('theme', next)
+    } catch {}
+  }
+
+  return { theme, cycle }
+}
+
 function useClans() {
   const [clans, setClans] = useState([])
   const [error, setError] = useState(null)
@@ -159,6 +195,7 @@ function App() {
   const { clans, error: clansError } = useClans()
   const [clanId, setClanId] = useState('')
   const { report, loading, error } = useReport(clanId)
+  const { theme, cycle } = useTheme()
 
   return (
     <div className="container">
@@ -190,6 +227,9 @@ function App() {
             Ataques de Guerra
           </button>
         </div>
+        <button className="theme-toggle" onClick={cycle} title="Tema: Auto segue o sistema">
+          Tema: {THEME_LABEL[theme]}
+        </button>
       </nav>
 
       {clansError && <p className="error">{clansError}</p>}
