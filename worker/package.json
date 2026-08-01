@@ -1,0 +1,14 @@
+{
+  "name": "royale-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Coleta dados de clãs do Clash Royale (via RoyaleAPI proxy) e grava no Firestore. Rodado pelo GitHub Actions.",
+  "scripts": {
+    "collect": "node src/collect.js",
+    "seed": "node src/seed.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
