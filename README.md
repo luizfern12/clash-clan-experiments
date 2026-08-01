@@ -21,7 +21,7 @@ GitHub Actions (cron */30)        React SPA (GitHub Pages)
 ## Funcionalidades
 
 - **Relatório**: média de fama das últimas 4 e 8 guerras por membro, com avisos de promoção (membro → ancião com média 4 > 2500; ancião → co-líder com média 8 > 2500). Somente leitura — nenhuma ação é executada no clã.
-- **Ataques de Guerra**: total de ataques das últimas 7 semanas + semana atual, e uma **tabela jogador × dia** com os ataques diários das últimas 4 semanas + semana atual.
+- **Ataques de Guerra**: total de ataques das últimas 7 semanas + semana atual, e uma **tabela jogador × dia** com os ataques diários (colunas com a **tag da guerra**, ex.: `134/1`). A tabela permite **ordenar por total de ataques** (mais→menos / menos→mais).
 - **Tema**: switch Auto/Claro/Escuro (padrão `auto` segue o sistema); escolha persistida no `localStorage`.
 
 > A tabela diária só acumula a partir do início da coleta — a API oficial não expõe histórico diário de semanas passadas.
@@ -33,6 +33,7 @@ worker/   Node.js worker (firebase-admin) — coleta e grava no Firestore
 client/   React + Vite SPA (GitHub Pages) — lê o Firestore
 .github/  collect.yml (cron */30) + deploy.yml (Pages)
 firestore.rules
+MANUS.md  spec autocontida (PT-BR) para reconstruir o app com IA (Manus)
 ```
 
 ### Worker

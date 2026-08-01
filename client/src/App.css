@@ -117,6 +117,25 @@ body {
   border-radius: 8px;
 }
 
+.sort-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sort-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
 table.daily th,
 table.daily td {
   white-space: nowrap;

@@ -132,8 +132,16 @@ function WarAttacksTab({ report }) {
   const wa = report.warAttacks
   const daily = wa?.daily || { dates: [], players: {} }
   const dates = daily.dates || []
-  const players = Object.entries(daily.players || {})
+  const labels = daily.labels || {}
+  const [sort, setSort] = useState('default')
   const max = Math.max(...(wa?.weeks || []).map((w) => w.attacks), 1)
+
+  const totalOf = ([, p]) => dates.reduce((a, d) => a + (p.days?.[d] || 0), 0)
+  const players = Object.entries(daily.players || {})
+  if (sort !== 'default') {
+    const dir = sort === 'desc' ? -1 : 1
+    players.sort((a, b) => (totalOf(b) - totalOf(a)) * dir || a[0].localeCompare(b[0]))
+  }
 
   return (
     <>
@@ -161,28 +169,45 @@ function WarAttacksTab({ report }) {
       {dates.length === 0 ? (
         <p className="muted">Ainda sem dados diários — a coleta começou a rodar agora.</p>
       ) : (
-        <div className="table-scroll">
-          <table className="daily">
-            <thead>
-              <tr>
-                <th>Jogador</th>
-                {dates.map((d) => (
-                  <th key={d}>{d.slice(5)}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {players.map(([tag, p]) => (
-                <tr key={tag}>
-                  <td>{p.name}</td>
+        <>
+          <div className="sort-row">
+            <label htmlFor="daily-sort">Ordenar por ataques:</label>
+            <select
+              id="daily-sort"
+              className="sort-select"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="default">Ordem padrão</option>
+              <option value="desc">Mais → Menos</option>
+              <option value="asc">Menos → Mais</option>
+            </select>
+          </div>
+          <div className="table-scroll">
+            <table className="daily">
+              <thead>
+                <tr>
+                  <th>Jogador</th>
                   {dates.map((d) => (
-                    <td key={d}>{fmt(p.days?.[d])}</td>
+                    <th key={d} title={d}>
+                      {labels[d] || d.slice(5)}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {players.map(([tag, p]) => (
+                  <tr key={tag}>
+                    <td>{p.name}</td>
+                    {dates.map((d) => (
+                      <td key={d}>{fmt(p.days?.[d])}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </>
   )

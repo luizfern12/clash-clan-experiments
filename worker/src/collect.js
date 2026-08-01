@@ -16,15 +16,44 @@ function ourClanParticipants(current, clanId) {
   return found?.participants || [];
 }
 
+function currentSeason(logItems, sectionIndex) {
+  const items = [...(logItems || [])].sort((a, b) =>
+    (b.createdDate || "").localeCompare(a.createdDate || ""),
+  );
+  const first = items[0];
+  if (!first || typeof first.seasonId !== "number") return null;
+  return (first.sectionIndex ?? 0) >= sectionIndex ? first.seasonId + 1 : first.seasonId;
+}
+
+// Rótulo da guerra no jogo: "{season}/{dia}" (ex.: 134/3). Dia derivado do
+// periodIndex: cada guerra ocupa os períodos {section}*7+3 .. +6.
+function warLabel(logItems, current) {
+  if (current.sectionIndex == null || current.periodIndex == null) return null;
+  const season = currentSeason(logItems, current.sectionIndex);
+  const day = current.periodIndex - current.sectionIndex * 7 - 2;
+  return season == null ? null : `${season}/${day}`;
+}
+
+// Clãs fora de uma guerra atual retornam 404 em currentriverrace.
+async function currentRaceOrEmpty(path) {
+  try {
+    return await apiGet(path);
+  } catch (err) {
+    if (err.status === 404) return {};
+    throw err;
+  }
+}
+
 async function collectClan(firestore, clanId) {
   const tag = encodeTag(clanId);
   const [clan, current, log] = await Promise.all([
     apiGet(`/clans/${tag}`),
-    apiGet(`/clans/${tag}/currentriverrace`),
+    currentRaceOrEmpty(`/clans/${tag}/currentriverrace`),
     apiGet(`/clans/${tag}/riverracelog`),
   ]);
 
   const today = utcDate();
+  const label = warLabel(log.items, current);
   const reportRef = firestore.doc(`${COLLECTION}/${clanId}/report/latest`);
   const reportSnap = await reportRef.get();
   const report = reportSnap.exists ? reportSnap.data() : null;
@@ -49,6 +78,7 @@ async function collectClan(firestore, clanId) {
   await dailyRef.set(
     {
       date: today,
+      label,
       raceId: String(current.periodIndex ?? ""),
       players: [...playersMap.values()],
       updatedAt: new Date().toISOString(),
@@ -90,8 +120,12 @@ async function collectClan(firestore, clanId) {
 
   // --- matriz diária (últimas 5 semanas) ---
   const cutoff = utcDate(new Date(Date.now() - RETENTION_DAYS * 86400000));
-  let daily = report?.data?.daily || { dates: [], players: {} };
+  let daily = report?.data?.daily || { dates: [], players: {}, labels: {} };
   daily.dates = (daily.dates || []).filter((d) => d >= cutoff);
+  daily.labels = Object.fromEntries(
+    Object.entries(daily.labels || {}).filter(([d]) => d >= cutoff),
+  );
+  if (label) daily.labels[today] = label;
   for (const tag of Object.keys(daily.players)) {
     const cur = daily.players[tag];
     cur.days = Object.fromEntries(Object.entries(cur.days || {}).filter(([d]) => d >= cutoff));
