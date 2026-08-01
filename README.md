@@ -34,6 +34,7 @@ client/   React + Vite SPA (GitHub Pages) — lê o Firestore
 .github/  collect.yml (cron */30) + deploy.yml (Pages)
 firestore.rules
 MANUS.md  spec autocontida (PT-BR) para reconstruir o app com IA (Manus)
+PROMPT_IA.md  prompt direto (PT-BR) para outra IA construir o app do zero
 ```
 
 ### Worker
