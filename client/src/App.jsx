@@ -8,7 +8,6 @@ function fmt(v) {
 }
 
 const THEMES = ['auto', 'light', 'dark']
-const THEME_LABEL = { auto: 'Auto', light: 'Claro', dark: 'Escuro' }
 
 function useTheme() {
   const [theme, setTheme] = useState(() => {
@@ -32,15 +31,14 @@ function useTheme() {
     }
   }, [theme])
 
-  const cycle = () => {
-    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length]
+  const set = (next) => {
     setTheme(next)
     try {
       localStorage.setItem('theme', next)
     } catch {}
   }
 
-  return { theme, cycle }
+  return { theme, set }
 }
 
 function useClans() {
@@ -195,7 +193,7 @@ function App() {
   const { clans, error: clansError } = useClans()
   const [clanId, setClanId] = useState('')
   const { report, loading, error } = useReport(clanId)
-  const { theme, cycle } = useTheme()
+  const { theme, set } = useTheme()
 
   return (
     <div className="container">
@@ -227,9 +225,16 @@ function App() {
             Ataques de Guerra
           </button>
         </div>
-        <button className="theme-toggle" onClick={cycle} title="Tema: Auto segue o sistema">
-          Tema: {THEME_LABEL[theme]}
-        </button>
+        <select
+          className="theme-select"
+          value={theme}
+          onChange={(e) => set(e.target.value)}
+          title="Tema: Auto segue o sistema"
+        >
+          <option value="auto">Auto</option>
+          <option value="light">Claro</option>
+          <option value="dark">Escuro</option>
+        </select>
       </nav>
 
       {clansError && <p className="error">{clansError}</p>}

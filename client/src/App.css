@@ -122,18 +122,20 @@ table.daily td:first-child {
 }
 
 .tabs button,
-.theme-toggle {
+.theme-select {
+  font-size: 15px;
+}
+
+.tabs button {
   padding: 8px 16px;
   border: none;
   background: none;
-  font-size: 15px;
   cursor: pointer;
   border-radius: 6px;
   color: var(--text);
 }
 
-.tabs button:hover,
-.theme-toggle:hover {
+.tabs button:hover {
   background: var(--hover);
 }
 
@@ -142,8 +144,13 @@ table.daily td:first-child {
   color: var(--accent-text);
 }
 
-.theme-toggle {
+.theme-select {
+  padding: 8px 12px;
+  border-radius: 6px;
   border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  cursor: pointer;
   white-space: nowrap;
 }
 
