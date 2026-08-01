@@ -33,7 +33,7 @@ function useReport(clanId) {
     setLoading(true)
     setError(null)
     return onSnapshot(
-      doc(db, 'clans', clanId, 'report'),
+      doc(db, 'clans', clanId, 'report', 'latest'),
       (snap) => {
         setReport(snap.exists() ? snap.data() : null)
         setLoading(false)

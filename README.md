@@ -6,12 +6,12 @@ Dashboard de gestão de clã do Clash Royale: relatório de promoções e acompa
 
 ```
 GitHub Actions (cron */30)        React SPA (GitHub Pages)
-┌────────────────────────┐        ┌──────────────────────┐
-│ worker/collect.js      │  lê    │ Firestore (leitura)  │
-│  → API RoyaleAPI proxy │──────►│ clans/{id}/report    │◄── front lê
-│  → grava Firestore     │        │ clans/{id}/daily/... │
-└────────────────────────┘        │ clans (lista)        │
-      Admin SDK (secrets)         └──────────────────────┘
+┌────────────────────────┐        ┌──────────────────────────┐
+│ worker/collect.js      │  lê    │ Firestore (leitura)      │
+│  → API RoyaleAPI proxy │──────►│ clans/{id}/report/latest  │◄── front lê
+│  → grava Firestore     │        │ clans/{id}/daily/{date}  │
+│  Admin SDK (secrets)   │        │ clans (lista)            │
+└────────────────────────┘        └──────────────────────────┘
 ```
 
 - O **worker** (rodado pelo GitHub Actions a cada 30 min) consulta a API oficial via o proxy da RoyaleAPI (funciona de IP dinâmico), grava snapshots brutos no Firestore e **pré-computa** um doc `report` por clã.
@@ -54,7 +54,11 @@ npm run dev
 
 Envs (públicas, não são segredos): `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`. Veja `client/.env.example`.
 
-## Setup no GitHub
+## Setup
+
+Guia completo para configurar do zero (fork/instância própria): veja [Setup.md](Setup.md).
+
+### Setup no GitHub
 
 1. Repositório **público** (minutos do Actions ilimitados e Pages grátis).
 2. No Firebase: crie um projeto (plano **Spark**, grátis), habilite **Firestore** e gere uma **service account** (JSON).

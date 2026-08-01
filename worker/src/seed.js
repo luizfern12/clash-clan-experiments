@@ -11,7 +11,7 @@ async function main() {
   const disable = process.argv.includes("--disable");
   const tag = encodeTag(arg);
   const clan = await apiGet(`/clans/${tag}`);
-  const id = normalizeTag(tag);
+  const id = normalizeTag(arg);
 
   await db()
     .doc(`clans/${id}`)

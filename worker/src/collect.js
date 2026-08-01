@@ -25,7 +25,7 @@ async function collectClan(firestore, clanId) {
   ]);
 
   const today = utcDate();
-  const reportRef = firestore.doc(`${COLLECTION}/${clanId}/report`);
+  const reportRef = firestore.doc(`${COLLECTION}/${clanId}/report/latest`);
   const reportSnap = await reportRef.get();
   const report = reportSnap.exists ? reportSnap.data() : null;
 
