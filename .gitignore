@@ -1,0 +1,23 @@
+node_modules/
+dist/
+
+# Secrets
+AGENTS.md
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Runtime data
+snapshots/

@@ -1,0 +1,172 @@
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 24px;
+}
+
+.brand {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: inherit;
+}
+
+.tabs button:hover {
+  background: #eee;
+}
+
+.tabs button.active {
+  background: #1e6fd9;
+  color: #fff;
+}
+
+.search {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.search input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  min-width: 260px;
+}
+
+.search button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #1e6fd9;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.search button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  color: #c0392b;
+  text-align: center;
+}
+
+.warnings {
+  margin-bottom: 16px;
+}
+
+.warning {
+  background: #fff3cd;
+  border: 1px solid #ffe08a;
+  border-left: 4px solid #e6a700;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.reason {
+  color: #7a5d00;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+th {
+  background: #f4f4f4;
+}
+
+tr.promoted td {
+  background: #fff8e1;
+  font-weight: 600;
+}
+
+.summary {
+  margin-bottom: 16px;
+}
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 260px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.bar-group {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.bar-value {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.bar-value .today {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: #666;
+}
+
+.bar {
+  width: 100%;
+  max-width: 48px;
+  background: #7fb3f5;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s;
+}
+
+.bar.current {
+  background: #1e6fd9;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  white-space: nowrap;
+}
