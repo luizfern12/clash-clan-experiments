@@ -199,43 +199,47 @@ function App() {
     <>
       <nav className="navbar">
         <div className="navbar-inner">
-          <span className="brand">Clash Royale — Gestão de Clã</span>
-          <select
-            className="clan-select"
-            value={clanId}
-            onChange={(e) => setClanId(e.target.value)}
-          >
-            <option value="">Selecione um clã…</option>
-            {clans.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} (#{c.id})
-              </option>
-            ))}
-          </select>
-          <div className="tabs">
-            <button
-              className={tab === 'report' ? 'active' : ''}
-              onClick={() => setTab('report')}
-            >
-              Relatório
-            </button>
-            <button
-              className={tab === 'attacks' ? 'active' : ''}
-              onClick={() => setTab('attacks')}
-            >
-              Ataques de Guerra
-            </button>
+          <div className="navbar-left">
+            <span className="brand">ClashClanSpy</span>
+            <div className="tabs">
+              <button
+                className={tab === 'report' ? 'active' : ''}
+                onClick={() => setTab('report')}
+              >
+                Relatório
+              </button>
+              <button
+                className={tab === 'attacks' ? 'active' : ''}
+                onClick={() => setTab('attacks')}
+              >
+                Ataques de Guerra
+              </button>
+            </div>
           </div>
-          <select
-            className="theme-select"
-            value={theme}
-            onChange={(e) => set(e.target.value)}
-            title="Tema: Auto segue o sistema"
-          >
-            <option value="auto">Auto</option>
-            <option value="light">Claro</option>
-            <option value="dark">Escuro</option>
-          </select>
+          <div className="navbar-right">
+            <select
+              className="clan-select"
+              value={clanId}
+              onChange={(e) => setClanId(e.target.value)}
+            >
+              <option value="">Selecione um clã…</option>
+              {clans.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} (#{c.id})
+                </option>
+              ))}
+            </select>
+            <select
+              className="theme-select"
+              value={theme}
+              onChange={(e) => set(e.target.value)}
+              title="Tema: Auto segue o sistema"
+            >
+              <option value="auto">Auto</option>
+              <option value="light">Claro</option>
+              <option value="dark">Escuro</option>
+            </select>
+          </div>
         </div>
       </nav>
       <div className="container">

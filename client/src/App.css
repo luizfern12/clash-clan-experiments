@@ -76,6 +76,20 @@ body {
   gap: 12px 16px;
 }
 
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .brand {
   font-size: 18px;
   font-weight: 600;
