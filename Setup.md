@@ -132,8 +132,36 @@ npm run dev
 ## 6. Publicar
 
 1. Faça push na branch `main` — o workflow `deploy.yml` builda o client e publica no Pages.
-2. O workflow `collect.yml` roda sozinho a cada 30 min (cron). Para testar na hora: **Actions → collect.yml → Run workflow**.
+2. O workflow `collect.yml` roda sozinho a cada 10 min (cron). Para testar na hora: **Actions → collect.yml → Run workflow**.
 3. Se ainda não seedou clãs, faça o seed (passo 4) antes ou depois do primeiro collect — o collect só processa clãs com `enabled: true`.
+
+> O cron do GitHub Actions não é pontual (pode atrasar de 5 min a horas). Para frequência garantida, veja o passo 6.5 (cron-job.org + Render).
+
+## 6.5 Coletor via cron-job.org + Render (alternativa ao Actions, opcional)
+
+O `worker/` também roda como **servidor HTTP** (`POST /collect` dispara a coleta em background e responde 202 na hora; `GET /health` para health check). Isso permite agendar a coleta com **cron-job.org** (pontual, grátis, até 1×/min) apontando para um **Render free web service** — sem depender do timing imprevisível do GitHub Actions.
+
+> Por que não Cloudflare Workers? O plano Free limita CPU a 10 ms por invocação (inclusive Cron Trigger) — o coletor faz parsing de payloads grandes + assinatura JWT p/ Firestore e estoura o limite (Error 1102). Render free (512 MB RAM, 0.1 CPU) não tem esse limite e roda Node de verdade.
+
+**1. Deploy no Render**
+1. Crie conta em https://render.com (grátis, sem cartão).
+2. **New + → Web Service** → conecte o repo → em **Root Directory** use `/` e nos comandos: Build = `cd worker && npm ci`, Start = `cd worker && npm start`.
+3. Plano **Free**. O `render.yaml` do repo já define isso se preferir **Blueprint** (New + → Blueprint).
+4. Em **Environment**, adicione manualmente (valores não vêm do repo):
+   - `ROYALE_API_TOKEN` — token da API (passo 1.1)
+   - `FIREBASE_SERVICE_ACCOUNT` — base64 do service account (passo 2.3)
+5. Health check path: `/health` (Render reinicia o serviço se falhar).
+6. Guarde a URL: `https://SEU-SERVICO.onrender.com`.
+
+**2. Agendar no cron-job.org**
+1. Crie conta em https://cron-job.org (grátis).
+2. **Create cronjob**: URL = `https://SEU-SERVICO.onrender.com/collect`, método **POST**, schedule `*/5 * * * *` (a cada 5 min; o serviço também pode ser usado com `GET`).
+3. Deixe **Save responses** ligado para depurar. Timeout de 30 s do cron-job.org não atrapalha: o endpoint responde 202 na hora e a coleta segue em background.
+
+**3. Desligar o Actions** (quando o cron-job.org+Render estiver no ar)
+No `.github/workflows/collect.yml`, remova o bloco `schedule:` (mantenha `workflow_dispatch` para rodadas manuais) — evita coletar em dobro.
+
+**Limites verificados**: ping a cada 5 min mantém o serviço acordado (< 15 min de idle, sem cold start) e consome ~744 h/mês (abaixo das 750 h grátis). Firestore fica em ~5 k writes/dia (quota Spark: 20 k). API: ~3,5 k req/dia. Todas as execuções cabem nas quotas grátis.
 
 ## 7. Troubleshooting
 
@@ -149,4 +177,4 @@ npm run dev
 
 ## 8. Custo
 
-Plano Spark: 50k reads, 20k writes, 20k deletes/dia, 1 GiB. Com ~20 clãs e coleta a cada 30 min, usa ~10% da quota. Repo público: Actions e Pages gratuitos. Exceder quota bloqueia no dia, não cobra.
+Plano Spark: 50k reads, 20k writes, 20k deletes/dia, 1 GiB. Com ~20 clãs e coleta a cada 10 min, usa ~10% da quota. Repo público: Actions e Pages gratuitos. Exceder quota bloqueia no dia, não cobra.

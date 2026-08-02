@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Coleta dados de clãs do Clash Royale (via RoyaleAPI proxy) e grava no Firestore. Rodado pelo GitHub Actions.",
   "scripts": {
+    "start": "node src/server.js",
     "collect": "node src/collect.js",
     "seed": "node src/seed.js"
   },

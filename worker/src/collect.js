@@ -1,3 +1,4 @@
+import { pathToFileURL } from "url";
 import { apiGet, encodeTag, normalizeTag } from "./clashroyale.js";
 import { analyzeRaces, buildWarAttacks } from "./analyze.js";
 import { db } from "./firebase.js";
@@ -174,24 +175,41 @@ async function collectClan(firestore, clanId) {
   );
 }
 
-async function main() {
-  const firestore = db();
+// Percorre os clãs habilitados e grava daily + report no Firestore.
+// Exemplo de uso: via CLI (node src/collect.js) ou via POST /collect (server.js).
+export async function collectAll(firestore) {
   const clans = await firestore.collection(COLLECTION).where("enabled", "==", true).get();
+  const results = [];
   if (clans.empty) {
     console.log("Nenhum clã habilitado no tracking.");
-    return;
+    return results;
   }
   for (const doc of clans.docs) {
     try {
       await collectClan(firestore, doc.id);
+      results.push({ tag: doc.id, ok: true });
     } catch (err) {
       console.error(`[${doc.id}] falha: ${err.message}`);
+      results.push({ tag: doc.id, ok: false, error: err.message });
     }
   }
   console.log("Coleta concluída.");
+  return results;
 }
 
-main().catch((err) => {
-  console.error("Falha na coleta:", err);
-  process.exit(1);
-});
+async function main() {
+  const firestore = db();
+  await collectAll(firestore);
+}
+
+const isMain =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isMain) {
+  main()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error("Falha na coleta:", err);
+      process.exit(1);
+    });
+}

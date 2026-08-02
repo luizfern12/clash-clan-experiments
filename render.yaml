@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: royale-collector
+    runtime: node
+    plan: free
+    buildCommand: cd worker && npm ci
+    startCommand: cd worker && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: ROYALE_API_TOKEN
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false
