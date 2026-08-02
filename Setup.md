@@ -132,7 +132,7 @@ npm run dev
 ## 6. Publicar
 
 1. Faça push na branch `main` — o workflow `deploy.yml` builda o client e publica no Pages.
-2. O workflow `collect.yml` roda sozinho a cada 10 min (cron). Para testar na hora: **Actions → collect.yml → Run workflow**.
+2. O workflow `collect.yml` agora roda só **manualmente** (`workflow_dispatch`), pois o agendamento foi movido para o cron-job.org + Render (passo 6.5). Para uma rodada avulsa: **Actions → collect.yml → Run workflow**.
 3. Se ainda não seedou clãs, faça o seed (passo 4) antes ou depois do primeiro collect — o collect só processa clãs com `enabled: true`.
 
 > O cron do GitHub Actions não é pontual (pode atrasar de 5 min a horas). Para frequência garantida, veja o passo 6.5 (cron-job.org + Render).
@@ -159,7 +159,7 @@ O `worker/` também roda como **servidor HTTP** (`POST /collect` dispara a colet
 3. Deixe **Save responses** ligado para depurar. Timeout de 30 s do cron-job.org não atrapalha: o endpoint responde 202 na hora e a coleta segue em background.
 
 **3. Desligar o Actions** (quando o cron-job.org+Render estiver no ar)
-No `.github/workflows/collect.yml`, remova o bloco `schedule:` (mantenha `workflow_dispatch` para rodadas manuais) — evita coletar em dobro.
+No `.github/workflows/collect.yml`, o bloco `schedule:` já foi removido (só `workflow_dispatch` para rodadas manuais) — evita coletar em dobro.
 
 **Limites verificados**: ping a cada 5 min mantém o serviço acordado (< 15 min de idle, sem cold start) e consome ~744 h/mês (abaixo das 750 h grátis). Firestore fica em ~5 k writes/dia (quota Spark: 20 k). API: ~3,5 k req/dia. Todas as execuções cabem nas quotas grátis.
 
