@@ -136,11 +136,10 @@ function WarAttacksTab({ report }) {
   const [sort, setSort] = useState('default')
   const max = Math.max(...(wa?.weeks || []).map((w) => w.attacks), 1)
 
-  const totalOf = ([, p]) => dates.reduce((a, d) => a + (p.days?.[d] || 0), 0)
+  const valueOf = (p, d) => p.days?.[d] ?? -1
   const players = Object.entries(daily.players || {})
   if (sort !== 'default') {
-    const dir = sort === 'desc' ? -1 : 1
-    players.sort((a, b) => (totalOf(b) - totalOf(a)) * dir || a[0].localeCompare(b[0]))
+    players.sort((a, b) => valueOf(b[1], sort) - valueOf(a[1], sort) || a[0].localeCompare(b[0]))
   }
 
   return (
@@ -171,7 +170,7 @@ function WarAttacksTab({ report }) {
       ) : (
         <>
           <div className="sort-row">
-            <label htmlFor="daily-sort">Ordenar por ataques:</label>
+            <label htmlFor="daily-sort">Ordenar por:</label>
             <select
               id="daily-sort"
               className="sort-select"
@@ -179,8 +178,11 @@ function WarAttacksTab({ report }) {
               onChange={(e) => setSort(e.target.value)}
             >
               <option value="default">Ordem padrão</option>
-              <option value="desc">Mais → Menos</option>
-              <option value="asc">Menos → Mais</option>
+              {dates.map((d) => (
+                <option key={d} value={d} title={d}>
+                  {labels[d] || d.slice(5)}
+                </option>
+              ))}
             </select>
           </div>
           <div className="table-scroll">
