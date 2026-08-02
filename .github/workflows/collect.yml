@@ -2,11 +2,15 @@ name: Collect clan data
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
 
 jobs:
   collect:
