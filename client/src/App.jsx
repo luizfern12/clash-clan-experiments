@@ -133,14 +133,28 @@ function WarAttacksTab({ report }) {
   const daily = wa?.daily || { dates: [], players: {} }
   const dates = daily.dates || []
   const labels = daily.labels || {}
-  const [sort, setSort] = useState('default')
+  const [sort, setSort] = useState({ key: 'name', dir: 'asc' })
   const max = Math.max(...(wa?.weeks || []).map((w) => w.attacks), 1)
 
   const valueOf = (p, d) => p.days?.[d] ?? -1
-  const players = Object.entries(daily.players || {})
-  if (sort !== 'default') {
-    players.sort((a, b) => valueOf(b[1], sort) - valueOf(a[1], sort) || a[0].localeCompare(b[0]))
+  const players = Object.entries(daily.players || {}).sort(([ta, pa], [tb, pb]) => {
+    let c
+    if (sort.key === 'name') c = pa.name.localeCompare(pb.name)
+    else c = valueOf(pa, sort.key) - valueOf(pb, sort.key)
+    if (sort.dir === 'desc') c = -c
+    return c || pa.name.localeCompare(pb.name)
+  })
+
+  const onClickColumn = (key) => {
+    setSort((s) =>
+      s.key === key
+        ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' }
+        : { key, dir: key === 'name' ? 'asc' : 'desc' },
+    )
   }
+
+  const colClass = (key) =>
+    `sortable${sort.key === key ? ` sort-active ${sort.dir}` : ''}`
 
   return (
     <>
@@ -169,30 +183,27 @@ function WarAttacksTab({ report }) {
         <p className="muted">Ainda sem dados diários — a coleta começou a rodar agora.</p>
       ) : (
         <>
-          <div className="sort-row">
-            <label htmlFor="daily-sort">Ordenar por:</label>
-            <select
-              id="daily-sort"
-              className="sort-select"
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-            >
-              <option value="default">Ordem padrão</option>
-              {dates.map((d) => (
-                <option key={d} value={d} title={d}>
-                  {labels[d] || d.slice(5)}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="table-scroll">
             <table className="daily">
               <thead>
                 <tr>
-                  <th>Jogador</th>
+                  <th
+                    className={colClass('name')}
+                    onClick={() => onClickColumn('name')}
+                    title="Ordenar por nome"
+                  >
+                    Jogador
+                    {sort.key === 'name' && (sort.dir === 'asc' ? ' ▲' : ' ▼')}
+                  </th>
                   {dates.map((d) => (
-                    <th key={d} title={d}>
+                    <th
+                      key={d}
+                      title={`${d} — ordenar por esta coluna`}
+                      className={colClass(d)}
+                      onClick={() => onClickColumn(d)}
+                    >
                       {labels[d] || d.slice(5)}
+                      {sort.key === d && (sort.dir === 'asc' ? ' ▲' : ' ▼')}
                     </th>
                   ))}
                 </tr>
