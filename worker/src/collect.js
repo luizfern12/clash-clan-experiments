@@ -145,6 +145,13 @@ async function collectClan(firestore, clanId) {
     if (roleByTag.has(key)) daily.players[key].role = roleByTag.get(key);
   }
 
+  // Remove jogadores que saíram do clã (ausentes da roster atual E da guerra atual).
+  const memberTags = new Set(members.map((m) => normalizeTag(m.tag)));
+  const participantTags = new Set(participants.map((p) => normalizeTag(p.tag)));
+  for (const key of Object.keys(daily.players)) {
+    if (!memberTags.has(key) && !participantTags.has(key)) delete daily.players[key];
+  }
+
   // --- poda de docs diários antigos (1x por dia) ---
   let lastPruneDate = report?.meta?.lastPruneDate;
   if (lastPruneDate !== today) {
